@@ -43,10 +43,10 @@ void wyswietl(float wyniki[], int rozmiar) {
 		printf("%f\n", wyniki[i]);
 }
 
-void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, int próbkowanie, float wyniki[], float wspolczynniki[], int B) {
+void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, int prÃ³bkowanie, float wyniki[], float wspolczynniki[], int B) {
 	int i;
 	float x = wmindziedziny;
-	float ilosc_probek = (wmaxdziedziny - wmindziedziny) / próbkowanie;
+	float ilosc_probek = (wmaxdziedziny - wmindziedziny) / prÃ³bkowanie;
 	float a = wspolczynniki[0];
 	float b = wspolczynniki[1];
 	float c = wspolczynniki[2];
@@ -106,16 +106,16 @@ void generator_szumu(int N, float *szum, float *wyniki) {
 int wczytywanie_wartosci(float wmindziedziny, float wmaxdziedziny) {
 	int var;
 	float temp;
-	printf("Podaj co jak¹ wartoœæ maj¹ byæ wyliczane wartoœci funkcji\n");
+	printf("Podaj co jakÄ… wartoÅ›Ä‡ majÄ… byÄ‡ wyliczane wartoÅ›ci funkcji\n");
 	while (scanf("%f", &temp) == 0) {
 		scanf("%*s");
 	}
 	fflush(stdin);
 	if (temp < 0) {
-		printf("Wpisales liczbe ujemn¹, ale nic siê nie sta³o\n");
+		printf("Wpisales liczbe ujemnÄ…, ale nic siÄ™ nie staÅ‚o\n");
 		temp = -temp;
 	}
-	if (temp == 0) temp = wczytywanie_wartosci(wmindziedziny,wmaxdziedziny);
+	if (temp == 0) temp = wczytywanie_wartosci(wmindziedziny, wmaxdziedziny);
 	var = abs((wmindziedziny + wmaxdziedziny) / temp);
 	return var;
 }
@@ -193,7 +193,7 @@ float *filtr(float *a, int x) {
 }
 
 void tekst_menu() {
-	printf("Co chcesz zrobic?\n 0: Zamknac program\n 1: Podac wartosc co jak¹ maj¹ byæ wyliczane wartoœci funkcji \n 2: Podac dziedzine \n 3: Podac wspolczynniki funkcji \n 4: Wyswietlic wyniki \n 5: Zaszumic wyniki i je wyswietlic \n 6: Zapisac szum w pliku CSV\n 7: Zapisac wyniki w pliku CSV\n 8: Wczytac szumy z pliku\n 9: Wczytac wyniki z pliku\n 10: Przefiltrowac zaszumione wyniki\n 11: Zapisac przefiltrowane wyniki w pliku CSV\n 12: Odczytac przefiltrowane wyniki z pliku CSV\n");
+	printf("Co chcesz zrobic?\n 0: Zamknac program\n 1: Podac wartosc co jakÄ… majÄ… byÄ‡ wyliczane wartoÅ›ci funkcji \n 2: Podac dziedzine \n 3: Podac wspolczynniki funkcji \n 4: Wyswietlic wyniki \n 5: Zaszumic wyniki i je wyswietlic \n 6: Zapisac szum w pliku CSV\n 7: Zapisac wyniki w pliku CSV\n 8: Wczytac szumy z pliku\n 9: Wczytac wyniki z pliku\n 10: Przefiltrowac zaszumione wyniki\n 11: Zapisac przefiltrowane wyniki w pliku CSV\n 12: Odczytac przefiltrowane wyniki z pliku CSV\n");
 }
 
 float* filtr_ruchoma_srednia(float *dane, int r_tab, int r_okna) {
@@ -214,9 +214,9 @@ float* filtr_ruchoma_srednia(float *dane, int r_tab, int r_okna) {
 
 int main() {
 	float min_dziedziny = 0;
-	float* przefiltorwany_sygna³;
+	float* przefiltorwany_sygnaÅ‚;
 	float max_dziedziny = 0;
-	int próbki = 100;
+	int prÃ³bki = 100;
 	int rozmiar_tablicy_wynikowej = 0;
 	float wart_wspolczynnikow[5];
 	int menu1;
@@ -266,12 +266,12 @@ int main() {
 		case 4:
 			if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1)) {
 				wynik = (float*)calloc(rozmiar_tablicy_wynikowej, sizeof(float));
-				wartosci_funkcji(min_dziedziny, max_dziedziny, próbki, wynik, wart_wspolczynnikow, rozmiar_tablicy_wynikowej);
+				wartosci_funkcji(min_dziedziny, max_dziedziny, prÃ³bki, wynik, wart_wspolczynnikow, rozmiar_tablicy_wynikowej);
 				wyswietl(wynik, rozmiar_tablicy_wynikowej);
 				odstep();
 				break;
 			}
-			else printf("Nie mozna wykonac czynnosci bez uprzedniego podania wartosci z kroków 1, 2 ,3\n");
+			else printf("Nie mozna wykonac czynnosci bez uprzedniego podania wartosci z krokÃ³w 1, 2 ,3\n");
 			odstep();
 			break;
 		case 5:
@@ -281,7 +281,7 @@ int main() {
 				odstep();
 				break;
 			}
-			else printf("Nie mo¿na wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2 ,3 ,4\n");
+			else printf("Nie moÅ¼na wykonac czynnosci bez uprzedniego podania wartosci krokÃ³w 1, 2 ,3 ,4\n");
 			odstep();
 			break;
 		case 6:
@@ -291,7 +291,7 @@ int main() {
 				odstep();
 				break;
 			}
-			else printf("Nie mo¿na wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2, 3, 4, 5\n");
+			else printf("Nie moÅ¼na wykonac czynnosci bez uprzedniego podania wartosci krokÃ³w 1, 2, 3, 4, 5\n");
 			odstep();
 			break;
 		case 7:
@@ -301,7 +301,7 @@ int main() {
 				odstep();
 				break;
 			}
-			else printf("Nie mo¿na wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2 ,3 ,4 \n");
+			else printf("Nie moÅ¼na wykonac czynnosci bez uprzedniego podania wartosci krokÃ³w 1, 2 ,3 ,4 \n");
 			odstep();
 			break;
 		case 8:
@@ -312,7 +312,7 @@ int main() {
 				odstep();
 				break;
 			}
-			else printf("Nie mo¿na wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2 ,3 ,4, 5, 6\n");
+			else printf("Nie moÅ¼na wykonac czynnosci bez uprzedniego podania wartosci krokÃ³w 1, 2 ,3 ,4, 5, 6\n");
 			odstep();
 			break;
 		case 9:
@@ -323,7 +323,7 @@ int main() {
 				odstep();
 				break;
 			}
-			else printf("Nie mo¿na wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2, 3, 4, 7\n");
+			else printf("Nie moÅ¼na wykonac czynnosci bez uprzedniego podania wartosci krokÃ³w 1, 2, 3, 4, 7\n");
 			odstep();
 			break;
 		case 10:
@@ -357,7 +357,7 @@ int main() {
 				odstep();
 				break;
 			}
-			else printf("Nie mozna wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2, 3, 4, 5\n");
+			else printf("Nie mozna wykonac czynnosci bez uprzedniego podania wartosci krokÃ³w 1, 2, 3, 4, 5\n");
 			odstep();
 			break;
 		case 11:
@@ -375,7 +375,7 @@ int main() {
 					break;
 				}
 			}
-			else printf("Nie mo¿na wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2, 3, 4, 5, 10\n");
+			else printf("Nie moÅ¼na wykonac czynnosci bez uprzedniego podania wartosci krokÃ³w 1, 2, 3, 4, 5, 10\n");
 			odstep();
 			break;
 		case 12:
@@ -386,7 +386,7 @@ int main() {
 				odstep();
 				break;
 			}
-			else printf("Nie mo¿na wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2, 3, 4, 5, 10, 11\n");
+			else printf("Nie moÅ¼na wykonac czynnosci bez uprzedniego podania wartosci krokÃ³w 1, 2, 3, 4, 5, 10, 11\n");
 			odstep();
 			break;
 		default: printf("Blad, Podaj liczbe z ponizszego zakresu\n");
