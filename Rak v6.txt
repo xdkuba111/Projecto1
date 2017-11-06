@@ -153,15 +153,9 @@ void odstep() {
 int lepszyScanf()
 {
 	float liczba;
-	while (1)
-	{
-		if (!scanf("%f", &liczba))
-		{
-			while ('\n' != getchar());
-		}
-		else return liczba;
-	}
-	system("cls");
+	scanf("%f", &liczba);
+	while (getchar() != '\n');
+	return liczba;
 }
 
 float *filtr(float *a, int x) {
