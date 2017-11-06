@@ -114,9 +114,9 @@ int wczytywanie_wartosci(float wmindziedziny, float wmaxdziedziny) {
 	if (temp < 0) {
 		printf("Wpisales liczbe ujemną, ale nic się nie stało\n");
 		temp = -temp;
-	}
-	if (temp == 0) temp = wczytywanie_wartosci(wmindziedziny, wmaxdziedziny);
-	var = abs((wmaxdziedziny-wmindziedziny) / temp);
+	} 
+	if (temp == 0) return wczytywanie_wartosci(wmindziedziny, wmaxdziedziny);
+	var = abs((wmaxdziedziny - wmindziedziny) / temp);
 	return var;
 }
 
