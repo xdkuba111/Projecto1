@@ -43,7 +43,7 @@ void wyswietl(float wyniki[], int rozmiar) {
 		printf("%f\n", wyniki[i]);
 }
 
-void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, int próbkowanie, float wyniki[], float wspolczynniki[], int B) {
+void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, int próbkowanie, float wyniki[], float wspolczynniki[], int rozmiar) {
 	int i;
 	float x = wmindziedziny;
 	float ilosc_probek = (wmaxdziedziny - wmindziedziny) / próbkowanie;
@@ -55,7 +55,7 @@ void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, int próbkowanie
 	printf("Wzor funkcji jest nastepujacy: y = %f * sin(%f * x^2) + %f * cos(%f * x^2) + %f \n ", a, b, c, d, e);
 	if (wyniki != NULL) {
 		printf("Wartosci funkcji to\n");
-		for (i = 0; i < B; i++)
+		for (i = 0; i < rozmiar; i++)
 		{
 			wyniki[i] = (a*sin(b*(x*x)) + c*cos(d*(x*x)) + e);
 			x = x + ilosc_probek;
@@ -116,7 +116,7 @@ int wczytywanie_wartosci(float wmindziedziny, float wmaxdziedziny) {
 		temp = -temp;
 	}
 	if (temp == 0) temp = wczytywanie_wartosci(wmindziedziny, wmaxdziedziny);
-	var = abs((wmindziedziny + wmaxdziedziny) / temp);
+	var = abs((wmaxdziedziny-wmindziedziny) / temp);
 	return var;
 }
 
