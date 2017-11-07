@@ -68,7 +68,7 @@ void ZapisCSV(float *dane, int rozmiar, char *nazwa) {
 	Wsk_do_pliku = fopen(nazwa, "w");
 	if (Wsk_do_pliku == NULL)
 	{
-		printf("Brak takiego Pliku!");
+		printf("BLAD!\n");
 	}
 	else {
 		for (i = 0; i < rozmiar; i++) {
