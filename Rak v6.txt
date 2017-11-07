@@ -43,10 +43,9 @@ void wyswietl(float wyniki[], int rozmiar) {
 		printf("%f\n", wyniki[i]);
 }
 
-void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, int próbkowanie, float wyniki[], float wspolczynniki[], int rozmiar) {
+void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, float próbkowanie, float wyniki[], float wspolczynniki[], int rozmiar) {
 	int i;
 	float x = wmindziedziny;
-	float ilosc_probek = (wmaxdziedziny - wmindziedziny) / próbkowanie;
 	float a = wspolczynniki[0];
 	float b = wspolczynniki[1];
 	float c = wspolczynniki[2];
@@ -58,7 +57,7 @@ void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, int próbkowanie
 		for (i = 0; i < rozmiar; i++)
 		{
 			wyniki[i] = (a*sin(b*(x*x)) + c*cos(d*(x*x)) + e);
-			x = x + ilosc_probek;
+			x = x + próbkowanie;
 		}
 	}
 }
@@ -87,36 +86,39 @@ void generator_szumu(int rozmiar, float *szum, float *wyniki) {
 	int losowe_probki = 0;
 	float *tablica = (float*)calloc(rozmiar, sizeof(float));
 	srand(time(NULL));
-	printf("Zaszumione wyniki:\n");
-	for (i = 0; i < rozmiar; i++) {
-		tablica[i] = wyniki[i];
+	if (szum != NULL) {
+		printf("Zaszumione wyniki:\n");
+		for (i = 0; i < rozmiar; i++) {
+			tablica[i] = wyniki[i];
+		}
+		for (z = 0; z < liczba_probek; z++) {
+			losowe_probki = rand() % rozmiar;
+			szum[losowe_probki] = (((rand() % 700) *1.1) / 500 - 0.1) + 0.03;
+			tablica[losowe_probki] = wyniki[losowe_probki] + szum[losowe_probki];
+		}
+		for (i = 0; i < rozmiar; i++) {
+			szum[i] = tablica[i];
+			printf("%f\n", szum[i]);
+		}
 	}
-	for (z = 0; z < liczba_probek; z++) {
-		tablica[losowe_probki] = wyniki[losowe_probki] + szum[losowe_probki];
-		losowe_probki = rand() % liczba_probek;
-		szum[losowe_probki] = ((rand() % 1000) *1.0 / 500 - 0.1);
-	}
-	for (i = 0; i < rozmiar; i++) {
-		szum[i] = tablica[i];
-		printf("%f\n", szum[i]);
-	}
+	else printf("Blad\n");
 	free(tablica);
 }
 
-int wczytywanie_wartosci(float wmindziedziny, float wmaxdziedziny) {
+int wczytywanie_wartosci(float wmindziedziny, float wmaxdziedziny, float *probki) {
 	int var;
 	float temp;
 	printf("Podaj co jaką wartość mają być wyliczane wartości funkcji\n");
-	while (scanf("%f", &temp) == 0) {
+	while (scanf("%f", probki) == 0) {
 		scanf("%*s");
 	}
 	fflush(stdin);
-	if (temp < 0) {
+	if (*probki < 0) {
 		printf("Wpisales liczbe ujemną, ale nic się nie stało\n");
-		temp = -temp;
+		*probki = -(*probki);
 	}
-	if (temp == 0) return wczytywanie_wartosci(wmindziedziny, wmaxdziedziny);
-	var = abs((wmaxdziedziny - wmindziedziny) / temp);
+	if (*probki == 0) return wczytywanie_wartosci(wmindziedziny, wmaxdziedziny, probki);
+	var = abs((wmaxdziedziny - wmindziedziny) / *probki);
 	return var;
 }
 
@@ -223,7 +225,7 @@ int main() {
 	float min_dziedziny = 0;
 	float* przefiltorwany_sygnał;
 	float max_dziedziny = 0;
-	int próbki = 100;
+	float próbki = 0;
 	int rozmiar_tablicy_wynikowej = 0;
 	float wart_wspolczynnikow[5];
 	int menu1;
@@ -256,7 +258,7 @@ int main() {
 			break;
 		case 1:
 			if ((min_dziedziny != 0) || (max_dziedziny != 0)) {
-				rozmiar_tablicy_wynikowej = wczytywanie_wartosci(min_dziedziny, max_dziedziny);
+				rozmiar_tablicy_wynikowej = wczytywanie_wartosci(min_dziedziny, max_dziedziny, &próbki);
 				odstep();
 				break;
 			}
