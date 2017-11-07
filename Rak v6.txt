@@ -114,7 +114,7 @@ int wczytywanie_wartosci(float wmindziedziny, float wmaxdziedziny) {
 	if (temp < 0) {
 		printf("Wpisales liczbe ujemną, ale nic się nie stało\n");
 		temp = -temp;
-	} 
+	}
 	if (temp == 0) return wczytywanie_wartosci(wmindziedziny, wmaxdziedziny);
 	var = abs((wmaxdziedziny - wmindziedziny) / temp);
 	return var;
@@ -122,30 +122,38 @@ int wczytywanie_wartosci(float wmindziedziny, float wmaxdziedziny) {
 
 float wczytanietablicy(float *tab, char *nazwa)
 {
-	float *temp = NULL;
+	float *temp = (float*)calloc(100, sizeof(float));
 	int i;
+	int z = 100;
 	int rozmiartab = 0;
 	float tmp = 0;
 	FILE *file;
 	file = fopen(nazwa, "rt");
-	while (fscanf(file, "%f ;\n", &tmp) == 1)
-	{
-		temp = (float*)realloc(tab, (rozmiartab + 1) * sizeof(float));
-		if (temp != NULL)
+	if (file != NULL) {
+		while (fscanf(file, "%f ;\n", &tmp) == 1)
 		{
-			tab = temp;
-			tab[rozmiartab] = tmp;
-			rozmiartab++;
+			if (rozmiartab < z) {
+				if (temp != NULL)
+				{
+					tab = temp;
+					tab[rozmiartab] = tmp;
+					rozmiartab++;
+				}
+				else
+				{
+					printf("Blad\n");
+					free(temp);
+				}
+			}
+			temp = (float*)realloc(tab, (rozmiartab + 100) * sizeof(float));
+			z = (rozmiartab + 100);
 		}
-		else
-		{
-			printf("Blad\n");
-			free(temp);
-		}
+		for (i = 0; i < rozmiartab; i++) { printf("%f\n", tab[i]); }
 	}
-	for (i = 0; i < rozmiartab; i++) { printf("%f\n", tab[i]); }
-	free(tab);
+	else printf("Blad\n");
+	free(temp);
 }
+
 void odstep() {
 	printf("\n");
 }
@@ -304,25 +312,13 @@ int main() {
 			odstep();
 			break;
 		case 8:
-			if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1) && (wynik != NULL) && (szum != NULL) && (pomocnicza3 == 1)) {
-				wczytana_tablica1 = (float*)calloc(1, sizeof(float));
-				printf("Odczytane zaszumione wyniki\n");
-				wczytanietablicy(wczytana_tablica1, "szumy.csv");
-				odstep();
-				break;
-			}
-			else printf("Nie można wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2 ,3 ,4, 5, 6\n");
+			wczytana_tablica1 = (float*)calloc(100, sizeof(float));
+			wczytanietablicy(wczytana_tablica1, "szumy.csv");
 			odstep();
 			break;
 		case 9:
-			if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1) && (wynik != NULL) && (pomocnicza4 == 1)) {
-				wczytana_tablica2 = (float*)calloc(1, sizeof(float));
-				printf("Odczytane wyniki\n");
-				wczytanietablicy(wczytana_tablica2, "wyniki.csv");
-				odstep();
-				break;
-			}
-			else printf("Nie można wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2, 3, 4, 7\n");
+			wczytana_tablica2 = (float*)calloc(100, sizeof(float));
+			wczytanietablicy(wczytana_tablica2, "wyniki.csv");
 			odstep();
 			break;
 		case 10:
@@ -378,14 +374,8 @@ int main() {
 			odstep();
 			break;
 		case 12:
-			if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1) && (szum != NULL) && (wynik != NULL) && (pomocnicza5 == 1) && (pomocnicza6 != 0)) {
-				wczytana_tablica3 = (float*)calloc(1, sizeof(float));
-				printf("Przefiltrowane wyniki\n");
-				wczytanietablicy(wczytana_tablica3, "filtr.csv");
-				odstep();
-				break;
-			}
-			else printf("Nie można wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2, 3, 4, 5, 10, 11\n");
+			wczytana_tablica3 = (float*)calloc(100, sizeof(float));
+			wczytanietablicy(wczytana_tablica3, "filtr.csv");
 			odstep();
 			break;
 		default: printf("Blad, Podaj liczbe z ponizszego zakresu\n");
