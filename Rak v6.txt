@@ -63,7 +63,7 @@ void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, int próbkowanie
 	}
 }
 
-void ZapisCSV(float *dane, int N, char *nazwa) {
+void ZapisCSV(float *dane, int rozmiar, char *nazwa) {
 	FILE *Wsk_do_pliku;
 	int i;
 	Wsk_do_pliku = fopen(nazwa, "w");
@@ -72,7 +72,7 @@ void ZapisCSV(float *dane, int N, char *nazwa) {
 		printf("Brak takiego Pliku!");
 	}
 	else {
-		for (i = 0; i < N; i++) {
+		for (i = 0; i < rozmiar; i++) {
 			fprintf(Wsk_do_pliku, "%f\n", dane[i]);
 		}
 		fclose(Wsk_do_pliku);
@@ -80,15 +80,15 @@ void ZapisCSV(float *dane, int N, char *nazwa) {
 	}
 }
 
-void generator_szumu(int N, float *szum, float *wyniki) {
+void generator_szumu(int rozmiar, float *szum, float *wyniki) {
 	int i;
-	int liczba_probek = rand() % N;
+	int liczba_probek = rand() % rozmiar;
 	int z;
 	int losowe_probki = 0;
-	float *tablica = (float*)calloc(N, sizeof(float));
+	float *tablica = (float*)calloc(rozmiar, sizeof(float));
 	srand(time(NULL));
 	printf("Zaszumione wyniki:\n");
-	for (i = 0; i < N; i++) {
+	for (i = 0; i < rozmiar; i++) {
 		tablica[i] = wyniki[i];
 	}
 	for (z = 0; z < liczba_probek; z++) {
@@ -96,7 +96,7 @@ void generator_szumu(int N, float *szum, float *wyniki) {
 		losowe_probki = rand() % liczba_probek;
 		szum[losowe_probki] = ((rand() % 1000) *1.0 / 500 - 0.1);
 	}
-	for (i = 0; i < N; i++) {
+	for (i = 0; i < rozmiar; i++) {
 		szum[i] = tablica[i];
 		printf("%f\n", szum[i]);
 	}
@@ -158,21 +158,21 @@ int lepszyScanf()
 	return liczba;
 }
 
-float *filtr(float *a, int x) {
+float *filtr(float *szum, int rozmiar) {
 	int i = 0;
 	int j;
 	float t;
 	int z;
 	int b = 0;
 	float *c = (float*)calloc(5, sizeof(float));
-	float *temp = (float*)calloc(x, sizeof(float));
-	temp[0] = a[0];
-	temp[1] = a[1];
-	temp[x - 1] = a[x - 1];
-	temp[x - 2] = a[x - 2];
-	for (z = 0; z<x - 4; z++) {
+	float *temp = (float*)calloc(rozmiar, sizeof(float));
+	temp[0] = szum[0];
+	temp[1] = szum[1];
+	temp[rozmiar - 1] = szum[rozmiar - 1];
+	temp[rozmiar - 2] = szum[rozmiar - 2];
+	for (z = 0; z<rozmiar - 4; z++) {
 		for (b = z; b < z + 5; b++) {
-			c[b - z] = a[b];
+			c[b - z] = szum[b];
 		}
 		for (j = z; j < z + 5; j++)
 		{
@@ -187,7 +187,6 @@ float *filtr(float *a, int x) {
 		temp[z + 2] = c[2];
 	}
 	return temp;
-	free(a);
 	free(c);
 	free(temp);
 }
