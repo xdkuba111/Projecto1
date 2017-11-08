@@ -22,6 +22,7 @@ void dziedzina(float *wmindziedziny, float *wmaxdziedziny) {
 		printf("Wartosc minimalna nie moze byc wieksza od wartosci maksymalnej\n");
 		dziedzina(wmindziedziny, wmaxdziedziny);
 	}
+	system("cls");
 }
 
 void wspolczynniki_funkcji(float *tablica) {
@@ -39,8 +40,10 @@ void wspolczynniki_funkcji(float *tablica) {
 
 void wyswietl(float wyniki[], int rozmiar) {
 	int i;
-	for (i = 0; i < rozmiar; i++)
-		printf("%f\n", wyniki[i]);
+	if (wyniki != NULL) {
+		for (i = 0; i < rozmiar; i++)
+			printf("%f\n", wyniki[i]);
+	}
 }
 
 void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, float próbkowanie, float wyniki[], float wspolczynniki[], int rozmiar) {
@@ -162,8 +165,8 @@ void odstep() {
 
 int lepszyScanf()
 {
-	float liczba;
-	scanf("%f", &liczba);
+	int liczba;
+	scanf("%d", &liczba);
 	while (getchar() != '\n');
 	return liczba;
 }
