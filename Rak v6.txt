@@ -7,17 +7,12 @@
 #include <locale.h>
 
 void dziedzina(float *wmindziedziny, float *wmaxdziedziny) {
-	fflush(stdin);
 	printf("Podaj wartosc minimalna dziedziny \t\n");
-	while (scanf("%f", wmindziedziny) == 0) {
-		scanf("%*s");
-	}
-	fflush(stdin);
+	scanf("%f", wmindziedziny);
+	while (getchar() != '\n');
 	printf("Podaj wartosc maksymalna dziedziny \t\n");
-	while (scanf("%f", wmaxdziedziny) == 0) {
-		scanf("%*s");
-	}
-	fflush(stdin);
+	scanf("%f", wmaxdziedziny);
+	while (getchar() != '\n');
 	if (*wmindziedziny >= *wmaxdziedziny) {
 		printf("Wartosc minimalna nie moze byc wieksza od wartosci maksymalnej\n");
 		dziedzina(wmindziedziny, wmaxdziedziny);
@@ -26,15 +21,12 @@ void dziedzina(float *wmindziedziny, float *wmaxdziedziny) {
 }
 
 void wspolczynniki_funkcji(float *tablica) {
-	fflush(stdin);
 	int i;
 	char z;
 	for (z = 'A', i = 0; i < 5; i++, z++) {
 		printf("Podaj wspolczynnik %c funkcji\n", z);
-		while (scanf("%f", &tablica[i]) == 0) {
-			scanf("%*s");
-		}
-		fflush(stdin);
+		scanf("%f", &tablica[i]);
+		while (getchar() != '\n');
 	}
 }
 
