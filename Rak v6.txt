@@ -117,7 +117,7 @@ int wczytywanie_wartosci(float wmindziedziny, float wmaxdziedziny, float *probki
 	return var;
 }
 
-float wczytanietablicy(float *tab, char *nazwa)
+float wczytanietablicy(float *tab, char *nazwa, int *tmp1)
 {
 	float *temp = (float*)calloc(100, sizeof(float));
 	int i;
@@ -146,6 +146,41 @@ float wczytanietablicy(float *tab, char *nazwa)
 			z = (rozmiartab + 100);
 		}
 		for (i = 0; i < rozmiartab; i++) { printf("%f\n", tab[i]); }
+	}
+	else printf("Blad! Brak pliku\n");
+	return rozmiartab;
+	free(temp);
+}
+
+float *wczytanietablicy1(float *tab, char *nazwa)
+{
+	float *temp = (float*)calloc(100, sizeof(float));
+	int i;
+	int z = 100;
+	int rozmiartab = 0;
+	float tmp = 0;
+	FILE *file;
+	file = fopen(nazwa, "rt");
+	if (file != NULL) {
+		while (fscanf(file, "%f ;\n", &tmp) == 1)
+		{
+			if (rozmiartab < z) {
+				if (temp != NULL)
+				{
+					tab = temp;
+					tab[rozmiartab] = tmp;
+					rozmiartab++;
+				}
+				else
+				{
+					printf("Blad\n");
+					free(temp);
+				}
+			}
+			temp = (float*)realloc(tab, (rozmiartab + 100) * sizeof(float));
+			z = (rozmiartab + 100);
+		}
+		return tab;
 	}
 	else printf("Blad\n");
 	free(temp);
@@ -197,7 +232,7 @@ float *filtr(float *szum, int rozmiar) {
 }
 
 void tekst_menu() {
-	printf("Co chcesz zrobic?\n 0: Zamknac program\n 1: Podac wartosc co jaką mają być wyliczane wartości funkcji \n 2: Podac dziedzine \n 3: Podac wspolczynniki funkcji \n 4: Wyswietlic wyniki \n 5: Zaszumic wyniki i je wyswietlic \n 6: Zapisac szum w pliku CSV\n 7: Zapisac wyniki w pliku CSV\n 8: Wczytac szumy z pliku\n 9: Wczytac wyniki z pliku\n 10: Przefiltrowac zaszumione wyniki\n 11: Zapisac przefiltrowane wyniki w pliku CSV\n 12: Odczytac przefiltrowane wyniki z pliku CSV\n");
+	printf("Co chcesz zrobic?\n 0: Zamknac program\n 1: Podac wartosc co jaką mają być wyliczane wartości funkcji \n 2: Podac dziedzine \n 3: Podac wspolczynniki funkcji \n 4: Wyswietlic wyniki \n 5: Zaszumic wyniki i je wyswietlic \n 6: Zapisac szum w pliku CSV\n 7: Zapisac wyniki w pliku CSV\n 8: Wczytac szumy z pliku\n 9: Wczytac wyniki z pliku\n 10: Przefiltrowac zaszumione wyniki\n 11: Zapisac przefiltrowane wyniki w pliku CSV (ostatni wykonany filtr)\n 12: Odczytac przefiltrowane wyniki z pliku CSV\n");
 }
 
 float* filtr_ruchoma_srednia(float *dane, int r_tab, int r_okna) {
@@ -215,30 +250,24 @@ float* filtr_ruchoma_srednia(float *dane, int r_tab, int r_okna) {
 	return nowe_dane;
 }
 
-
 int main() {
 	float min_dziedziny = 0;
-	float* przefiltorwany_sygnał;
 	float max_dziedziny = 0;
-	float próbki = 0;
+	float próbkowanie = 0;
 	int rozmiar_tablicy_wynikowej = 0;
+	int rozmiar_tablicy_wynikowej1;
 	float wart_wspolczynnikow[5];
-	int menu1;
 	int menu = 1;
+	int menu1;
+	int menu2 = 0;
 	int pomocnicza = 0;
 	int pomocnicza1 = 0;
-	int pomocnicza3 = 0;
-	int pomocnicza4 = 0;
-	int pomocnicza5 = 0;
-	int pomocnicza6 = 0;
-	float  *wczytana_tablica1 = NULL;
-	float  *wczytana_tablica2 = NULL;
-	float *wczytana_tablica3 = NULL;
-	float *wynik = NULL;
-	float *szum = NULL;
-	float *wczytana_tablica = NULL;
-	float *filtr_mediana = NULL;
-	float *filtr_srednia = NULL;
+	float  *wczytana_tablica = NULL;
+	float  *wynik = NULL;
+	float  *szum = NULL;
+	float *szum1 = NULL;
+	float  *filtr_mediana = NULL;
+	float  *filtr_srednia = NULL;
 	setlocale(LC_ALL, "polish_poland");
 	srand(time(NULL));
 	while (menu != 0) {
@@ -253,7 +282,7 @@ int main() {
 			break;
 		case 1:
 			if ((min_dziedziny != 0) || (max_dziedziny != 0)) {
-				rozmiar_tablicy_wynikowej = wczytywanie_wartosci(min_dziedziny, max_dziedziny, &próbki);
+				rozmiar_tablicy_wynikowej = wczytywanie_wartosci(min_dziedziny, max_dziedziny, &próbkowanie);
 				odstep();
 				break;
 			}
@@ -269,8 +298,9 @@ int main() {
 			break;
 		case 4:
 			if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1)) {
+				free(wynik);
 				wynik = (float*)calloc(rozmiar_tablicy_wynikowej, sizeof(float));
-				wartosci_funkcji(min_dziedziny, max_dziedziny, próbki, wynik, wart_wspolczynnikow, rozmiar_tablicy_wynikowej);
+				wartosci_funkcji(min_dziedziny, max_dziedziny, próbkowanie, wynik, wart_wspolczynnikow, rozmiar_tablicy_wynikowej);
 				wyswietl(wynik, rozmiar_tablicy_wynikowej);
 				odstep();
 				break;
@@ -279,7 +309,8 @@ int main() {
 			odstep();
 			break;
 		case 5:
-			if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1) && (wynik != NULL)) {
+			if ((pomocnicza == 1) && (wynik != NULL)) {
+				free(szum);
 				szum = (float*)calloc(rozmiar_tablicy_wynikowej, sizeof(float));
 				generator_szumu(rozmiar_tablicy_wynikowej, szum, wynik);
 				odstep();
@@ -289,9 +320,8 @@ int main() {
 			odstep();
 			break;
 		case 6:
-			if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1) && (wynik != NULL) && (szum != NULL)) {
+			if ((wynik != NULL) && (szum != NULL)) {
 				ZapisCSV(szum, rozmiar_tablicy_wynikowej, "szumy.csv");
-				pomocnicza3 = 1;
 				odstep();
 				break;
 			}
@@ -299,9 +329,8 @@ int main() {
 			odstep();
 			break;
 		case 7:
-			if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1) && (wynik != NULL)) {
+			if ((pomocnicza == 1) && (wynik != NULL)) {
 				ZapisCSV(wynik, rozmiar_tablicy_wynikowej, "wyniki.csv");
-				pomocnicza4 = 1;
 				odstep();
 				break;
 			}
@@ -309,38 +338,84 @@ int main() {
 			odstep();
 			break;
 		case 8:
-			wczytana_tablica1 = (float*)calloc(100, sizeof(float));
-			wczytanietablicy(wczytana_tablica1, "szumy.csv");
+			free(wczytana_tablica);
+			wczytana_tablica = (float*)calloc(100, sizeof(float));
+			rozmiar_tablicy_wynikowej1 = wczytanietablicy(wczytana_tablica, "szumy.csv", &rozmiar_tablicy_wynikowej1); //żeby nie trzeba dawać return rozmiaratab, tylko przypisywało tego rozmiar tab pod ten rozmiar_tablicy_znakowej1
 			odstep();
 			break;
 		case 9:
-			wczytana_tablica2 = (float*)calloc(100, sizeof(float));
-			wczytanietablicy(wczytana_tablica2, "wyniki.csv");
+			free(wczytana_tablica);
+			wczytana_tablica = (float*)calloc(100, sizeof(float));
+			rozmiar_tablicy_wynikowej1 = wczytanietablicy(wczytana_tablica, "wyniki.csv", &rozmiar_tablicy_wynikowej1);
 			odstep();
 			break;
 		case 10:
-			if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1) && (szum != NULL) && (wynik != NULL)) {
+			printf("Co chcialbys zrobic?\n 1: Przefiltrowac wygenerowane szumy\n 2: Przefiltrowac szumy z pliku\n");
+			menu2 = lepszyScanf();
+			if (menu2 == 2 && rozmiar_tablicy_wynikowej1!=0) {
+				if (rozmiar_tablicy_wynikowej1 > 0) {
+					printf("Ktorym sposobem chcialbys przefiltrowac wyniki?\n 1: Mediana\n 2: Srednia ruchoma\n");
+					menu1 = lepszyScanf();
+					if ((menu1 == 1) || (menu1 == 2)) {
+						if (menu1 == 1) {
+							free(wczytana_tablica);
+							free(szum1);
+							filtr_mediana = (float*)calloc(rozmiar_tablicy_wynikowej1, sizeof(float));
+							szum1 = (float*)calloc(rozmiar_tablicy_wynikowej1, sizeof(float));
+							wczytana_tablica = (float*)calloc(rozmiar_tablicy_wynikowej1, sizeof(float));
+							szum1 = wczytanietablicy1(wczytana_tablica, "szumy.csv");
+							filtr_mediana = filtr(szum1, rozmiar_tablicy_wynikowej1);
+							odstep();
+							printf("Przefiltrowane wyniki\n");
+							system("cls");
+							wyswietl(filtr_mediana, rozmiar_tablicy_wynikowej1);	
+							pomocnicza1 = 1;
+							odstep();
+							break;
+						}
+						else if (menu1 == 2) {
+							free(wczytana_tablica);
+							free(szum1);
+							filtr_srednia = (float*)calloc(rozmiar_tablicy_wynikowej1, sizeof(float));
+							szum1 = (float*)calloc(rozmiar_tablicy_wynikowej1, sizeof(float));
+							wczytana_tablica = (float*)calloc(rozmiar_tablicy_wynikowej1, sizeof(float));
+							szum1 = wczytanietablicy1(wczytana_tablica, "szumy.csv");
+							filtr_srednia = filtr_ruchoma_srednia(szum1, rozmiar_tablicy_wynikowej1, 5);
+							odstep();
+							printf("Przefiltrowane wyniki\n");
+							system("cls");
+							wyswietl(filtr_srednia, rozmiar_tablicy_wynikowej1);
+							pomocnicza1 = 2;
+							break;
+						}
+					}
+					else printf("BLAD! Nie podales jednej z powyzszych cyfr\n");
+					odstep();
+					break;
+				}
+				else printf("Nie mozna wykonac czynnosci bez uprzedniego wczytania szumów z pliku\n");
+				odstep();
+			}
+			else if (menu2 == 1 && rozmiar_tablicy_wynikowej!=0) {
 				printf("Ktorym sposobem chcialbys przefiltrowac wyniki?\n 1: Mediana\n 2: Srednia ruchoma\n");
 				menu1 = lepszyScanf();
 				if ((menu1 == 1) || (menu1 == 2)) {
-					if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1) && (wynik != NULL) && (szum != NULL) && (menu1 == 1)) {
+					if ((rozmiar_tablicy_wynikowej != 0)&&(menu1 == 1)) {
 						filtr_mediana = (float*)calloc(rozmiar_tablicy_wynikowej, sizeof(float));
 						filtr_mediana = filtr(szum, rozmiar_tablicy_wynikowej);
 						odstep();
 						printf("Przefiltrowane wyniki\n");
 						wyswietl(filtr_mediana, rozmiar_tablicy_wynikowej);
-						pomocnicza5 = 1;
 						pomocnicza1 = 1;
 						odstep();
 						break;
 					}
-					else if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1) && (wynik != NULL) && (szum != NULL) && (menu1 == 2)) {
+					else if ((rozmiar_tablicy_wynikowej != 0) && (menu1 == 2)) {
 						filtr_srednia = (float*)calloc(rozmiar_tablicy_wynikowej, sizeof(float));
 						filtr_srednia = filtr_ruchoma_srednia(szum, rozmiar_tablicy_wynikowej, 5);
 						odstep();
 						printf("Przefiltrowane wyniki\n");
 						wyswietl(filtr_srednia, rozmiar_tablicy_wynikowej);
-						pomocnicza5 = 1;
 						pomocnicza1 = 2;
 						break;
 					}
@@ -349,30 +424,29 @@ int main() {
 				odstep();
 				break;
 			}
-			else printf("Nie mozna wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2, 3, 4, 5\n");
+			else printf("Nie mozna wykonac czynnosci bez uprzedniego wygenerowania szumów\n");
 			odstep();
 			break;
 		case 11:
-			if ((rozmiar_tablicy_wynikowej != 0) && (max_dziedziny != 0) && (pomocnicza == 1) && (szum != NULL) && (wynik != NULL) && (pomocnicza5 == 1)) {
+			if (rozmiar_tablicy_wynikowej1 > 0) {
 				if (pomocnicza1 == 1) {
-					ZapisCSV(filtr_mediana, rozmiar_tablicy_wynikowej, "filtr.csv");
-					pomocnicza6 = 1;
+					ZapisCSV(filtr_mediana, rozmiar_tablicy_wynikowej1, "filtr.csv");
 					odstep();
 					break;
 				}
 				else if (pomocnicza1 == 2) {
-					ZapisCSV(filtr_srednia, rozmiar_tablicy_wynikowej, "filtr.csv");
-					pomocnicza6 = 1;
+					ZapisCSV(filtr_srednia, rozmiar_tablicy_wynikowej1, "filtr.csv");
 					odstep();
 					break;
 				}
 			}
-			else printf("Nie można wykonac czynnosci bez uprzedniego podania wartosci kroków 1, 2, 3, 4, 5, 10\n");
+			else printf("Nie można wykonac czynnosci bez uprzedniego przefiltrowania wynikow\n");
 			odstep();
 			break;
 		case 12:
-			wczytana_tablica3 = (float*)calloc(100, sizeof(float));
-			wczytanietablicy(wczytana_tablica3, "filtr.csv");
+			free(wczytana_tablica);
+			wczytana_tablica = (float*)calloc(100, sizeof(float));
+			wczytanietablicy(wczytana_tablica, "filtr.csv", rozmiar_tablicy_wynikowej1);
 			odstep();
 			break;
 		default: printf("Blad, Podaj liczbe z ponizszego zakresu\n");
@@ -381,7 +455,9 @@ int main() {
 	}
 	free(wynik);
 	free(szum);
+	free(szum1);
 	free(filtr_mediana);
 	free(filtr_srednia);
+	free(wczytana_tablica);
 	system("pause");
 }
