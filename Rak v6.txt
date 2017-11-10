@@ -155,7 +155,6 @@ float wczytanietablicy(float *tab, char *nazwa, int *tmp1)
 float *wczytanietablicy1(float *tab, char *nazwa)
 {
 	float *temp = (float*)calloc(100, sizeof(float));
-	int i;
 	int z = 100;
 	int rozmiartab = 0;
 	float tmp = 0;
@@ -232,7 +231,7 @@ float *filtr(float *szum, int rozmiar) {
 }
 
 void tekst_menu() {
-	printf("Co chcesz zrobic?\n 0: Zamknac program\n 1: Podac wartosc co jaką mają być wyliczane wartości funkcji \n 2: Podac dziedzine \n 3: Podac wspolczynniki funkcji \n 4: Wyswietlic wyniki \n 5: Zaszumic wyniki i je wyswietlic \n 6: Zapisac szum w pliku CSV\n 7: Zapisac wyniki w pliku CSV\n 8: Wczytac szumy z pliku\n 9: Wczytac wyniki z pliku\n 10: Przefiltrowac zaszumione wyniki\n 11: Zapisac przefiltrowane wyniki w pliku CSV (ostatni wykonany filtr)\n 12: Odczytac przefiltrowane wyniki z pliku CSV\n");
+	printf("Co chcesz zrobic?\n 0: Zamknac program\n 1: Podac wartosc co jaką mają być wyliczane wartości funkcji \n 2: Podac dziedzine \n 3: Podac wspolczynniki funkcji \n 4: Wyswietlic wyniki \n 5: Zaszumic wyniki\n 6: Zapisac szum w pliku CSV\n 7: Zapisac wyniki w pliku CSV\n 8: Wczytac szumy z pliku\n 9: Wczytac wyniki z pliku\n 10: Przefiltrowac zaszumione wyniki\n 11: Zapisac przefiltrowane wyniki w pliku CSV (ostatni wykonany filtr)\n 12: Odczytac przefiltrowane wyniki z pliku CSV\n");
 }
 
 float* filtr_ruchoma_srednia(float *dane, int r_tab, int r_okna) {
@@ -340,7 +339,7 @@ int main() {
 		case 8:
 			free(wczytana_tablica);
 			wczytana_tablica = (float*)calloc(100, sizeof(float));
-			rozmiar_tablicy_wynikowej1 = wczytanietablicy(wczytana_tablica, "szumy.csv", &rozmiar_tablicy_wynikowej1); //żeby nie trzeba dawać return rozmiaratab, tylko przypisywało tego rozmiar tab pod ten rozmiar_tablicy_znakowej1
+			rozmiar_tablicy_wynikowej1 = wczytanietablicy(wczytana_tablica, "szumy.csv", &rozmiar_tablicy_wynikowej1); /* żeby nie trzeba dawać return rozmiaratab w funckji wczytanietablicy (żeby był zwykły void), tylko przypisywało tego rozmiar_tab(z funkcji) pod ten rozmiar_tablicy_znakowej1 */
 			odstep();
 			break;
 		case 9:
@@ -352,7 +351,7 @@ int main() {
 		case 10:
 			printf("Co chcialbys zrobic?\n 1: Przefiltrowac wygenerowane szumy\n 2: Przefiltrowac szumy z pliku\n");
 			menu2 = lepszyScanf();
-			if (menu2 == 2 && rozmiar_tablicy_wynikowej1!=0) {
+			if (menu2 == 2 && rozmiar_tablicy_wynikowej1 != 0) {
 				if (rozmiar_tablicy_wynikowej1 > 0) {
 					printf("Ktorym sposobem chcialbys przefiltrowac wyniki?\n 1: Mediana\n 2: Srednia ruchoma\n");
 					menu1 = lepszyScanf();
@@ -368,7 +367,7 @@ int main() {
 							odstep();
 							printf("Przefiltrowane wyniki\n");
 							system("cls");
-							wyswietl(filtr_mediana, rozmiar_tablicy_wynikowej1);	
+							wyswietl(filtr_mediana, rozmiar_tablicy_wynikowej1);
 							pomocnicza1 = 1;
 							odstep();
 							break;
@@ -396,11 +395,11 @@ int main() {
 				else printf("Nie mozna wykonac czynnosci bez uprzedniego wczytania szumów z pliku\n");
 				odstep();
 			}
-			else if (menu2 == 1 && rozmiar_tablicy_wynikowej!=0) {
+			else if (menu2 == 1 && rozmiar_tablicy_wynikowej != 0) {
 				printf("Ktorym sposobem chcialbys przefiltrowac wyniki?\n 1: Mediana\n 2: Srednia ruchoma\n");
 				menu1 = lepszyScanf();
 				if ((menu1 == 1) || (menu1 == 2)) {
-					if ((rozmiar_tablicy_wynikowej != 0)&&(menu1 == 1)) {
+					if ((rozmiar_tablicy_wynikowej != 0) && (menu1 == 1)) {
 						filtr_mediana = (float*)calloc(rozmiar_tablicy_wynikowej, sizeof(float));
 						filtr_mediana = filtr(szum, rozmiar_tablicy_wynikowej);
 						odstep();
