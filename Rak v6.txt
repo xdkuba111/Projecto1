@@ -148,6 +148,7 @@ float wczytanietablicy(float *tab, char *nazwa, int *tmp1)
 		for (i = 0; i < rozmiartab; i++) { printf("%f\n", tab[i]); }
 	}
 	else printf("Blad! Brak pliku\n");
+	tmp1 = temp;
 	return rozmiartab;
 	free(temp);
 }
@@ -339,13 +340,13 @@ int main() {
 		case 8:
 			free(wczytana_tablica);
 			wczytana_tablica = (float*)calloc(100, sizeof(float));
-			rozmiar_tablicy_wynikowej1 = wczytanietablicy(wczytana_tablica, "szumy.csv", &rozmiar_tablicy_wynikowej1); /* żeby nie trzeba dawać return rozmiaratab w funckji wczytanietablicy (żeby był zwykły void), tylko przypisywało tego rozmiar_tab(z funkcji) pod ten rozmiar_tablicy_znakowej1 */
+			wczytanietablicy(wczytana_tablica, "szumy.csv", &rozmiar_tablicy_wynikowej1); /* żeby nie trzeba dawać return rozmiaratab w funckji wczytanietablicy (żeby był zwykły void), tylko przypisywało tego rozmiar_tab(z funkcji) pod ten rozmiar_tablicy_znakowej1 */
 			odstep();
 			break;
 		case 9:
 			free(wczytana_tablica);
 			wczytana_tablica = (float*)calloc(100, sizeof(float));
-			rozmiar_tablicy_wynikowej1 = wczytanietablicy(wczytana_tablica, "wyniki.csv", &rozmiar_tablicy_wynikowej1);
+			wczytanietablicy(wczytana_tablica, "wyniki.csv", &rozmiar_tablicy_wynikowej1);
 			odstep();
 			break;
 		case 10:
