@@ -10,6 +10,7 @@
 void dziedzina(float *wmindziedziny, float *wmaxdziedziny) {
 	printf("Podaj wartosc minimalna dziedziny \t\n");
 	*wmindziedziny = lepszyScanfFloat();
+	while (getchar() != '\n');
 	printf("Podaj wartosc maksymalna dziedziny \t\n");
 	*wmaxdziedziny = lepszyScanfFloat();
 	if (*wmindziedziny >= *wmaxdziedziny) {
@@ -217,7 +218,11 @@ float lepszyScanfFloat()
 			while (getchar() != '\n');
 			printf("Sproboj ponownie\n");
 		}
-		else return liczba;
+
+		else {
+			while (getchar() != '\n');
+			return liczba;
+		}
 	}
 }
 
