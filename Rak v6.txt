@@ -6,274 +6,21 @@
 #include <time.h>
 #include <locale.h>
 
-
-void dziedzina(float *wmindziedziny, float *wmaxdziedziny) {
-	printf("Podaj wartosc minimalna dziedziny \t\n");
-	*wmindziedziny = lepszyScanfFloat();
-	while (getchar() != '\n');
-	printf("Podaj wartosc maksymalna dziedziny \t\n");
-	*wmaxdziedziny = lepszyScanfFloat();
-	if (*wmindziedziny >= *wmaxdziedziny) {
-		printf("Wartosc minimalna nie moze byc wieksza od wartosci maksymalnej\n");
-		dziedzina(wmindziedziny, wmaxdziedziny);
-	}
-}
-
-void wspolczynniki_funkcji(float *tablica) {
-	int i;
-	char litera;
-	for (litera = 'A', i = 0; i < 5; i++, litera++) {
-		printf("Podaj wspolczynnik %c funkcji\n", litera);
-		scanf("%f", &tablica[i]);
-		while (getchar() != '\n');
-	}
-}
-
-void wyswietl(float wyniki[], int rozmiar) {
-	int i;
-	if (wyniki != NULL) {
-		for (i = 0; i < rozmiar; i++)
-			printf("%f\n", wyniki[i]);
-	}
-}
-
-void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, float próbkowanie, float wyniki[], float wspolczynniki[], int rozmiar) {
-	int i;
-	float x = wmindziedziny;
-	float a = wspolczynniki[0];
-	float b = wspolczynniki[1];
-	float c = wspolczynniki[2];
-	float d = wspolczynniki[3];
-	float e = wspolczynniki[4];
-	printf("Wzor funkcji jest nastepujacy: y = %f * sin(%f * x^2) + %f * cos(%f * x^2) + %f \n ", a, b, c, d, e);
-	if (wyniki != NULL) {
-		printf("Wartosci funkcji to\n");
-		for (i = 0; i < rozmiar; i++)
-		{
-			wyniki[i] = (a*sin(b*(x*x)) + c*cos(d*(x*x)) + e);
-			x = x + próbkowanie;
-		}
-	}
-}
-
-void ZapisCSV(float *dane, int rozmiar, char *nazwa) {
-	FILE *Wsk_do_pliku;
-	int i;
-	Wsk_do_pliku = fopen(nazwa, "w");
-	if (Wsk_do_pliku == NULL)
-	{
-		printf("BLAD!\n");
-	}
-	else {
-		for (i = 0; i < rozmiar; i++) {
-			fprintf(Wsk_do_pliku, "%f\n", dane[i]);
-		}
-		fclose(Wsk_do_pliku);
-		printf("Zapisano pomyslnie\n");
-	}
-}
-
-void generator_szumu(int rozmiar, float *szum, float *wyniki) {
-	int i;
-	int z;
-	int liczba_probek = rand() % rozmiar;
-	int losowe_probki = 0;
-	float *tablica = (float*)calloc(rozmiar, sizeof(float));
-	srand(time(NULL));
-	if (szum != NULL) {
-		printf("Zaszumione wyniki:\n");
-		for (i = 0; i < rozmiar; i++) {
-			tablica[i] = wyniki[i];
-		}
-		for (z = 0; z < liczba_probek; z++) {
-			losowe_probki = rand() % rozmiar;
-			szum[losowe_probki] = (((rand() % 700) *1.1) / 500 - 0.1) + 0.03;
-			tablica[losowe_probki] = wyniki[losowe_probki] + szum[losowe_probki];
-		}
-		for (i = 0; i < rozmiar; i++) {
-			szum[i] = tablica[i];
-			printf("%f\n", szum[i]);
-		}
-	}
-	else printf("Blad\n");
-	free(tablica);
-}
-
-int wczytywanie_wartosci(float wmindziedziny, float wmaxdziedziny, float *probki) {
-	int wartosc;
-	printf("Podaj co jaką wartość mają być wyliczane wartości funkcji\n");
-	scanf("%f", probki);
-	while (getchar() != '\n');
-	if (*probki < 0) {
-		printf("Wpisales liczbe ujemną, ale nic się nie stało\n");
-		*probki = -(*probki);
-	}
-	if (*probki == 0) return wczytywanie_wartosci(wmindziedziny, wmaxdziedziny, probki);
-	wartosc = abs((wmaxdziedziny - wmindziedziny) / *probki);
-	return wartosc;
-}
-
-int wczytanietablicy(char *nazwa, int *rozmiar)
-{
-	float *tab = (float*)calloc(100, sizeof(float));
-	float *temp = (float*)calloc(100, sizeof(float));
-	int i;
-	int pomocnicza_rozmiar = 100;
-	int rozmiartab = 0;
-	float tmp = 0;
-	FILE *file;
-	file = fopen(nazwa, "rt");
-	if (file != NULL) {
-		while (fscanf(file, "%f ;\n", &tmp) == 1)
-		{
-			if (rozmiartab < pomocnicza_rozmiar) {
-				if (temp != NULL)
-				{
-					tab = temp;
-					tab[rozmiartab] = tmp;
-					rozmiartab++;
-				}
-				else
-				{
-					printf("Blad\n");
-					free(temp);
-				}
-			}
-			temp = (float*)realloc(tab, (rozmiartab + 100) * sizeof(float));
-			pomocnicza_rozmiar = (rozmiartab + 100);
-		}
-		for (i = 0; i < rozmiartab; i++) {
-			printf("%f\n", tab[i]);
-		}
-		*rozmiar = rozmiartab;
-	}
-	if (*rozmiar > 0) {
-		return 1;
-	}
-	else return 0;
-	free(temp);
-}
-
-float *wczytanietablicy1(char *nazwa)
-{
-	float *tab = (float*)calloc(100, sizeof(float));
-	float *temp = (float*)calloc(100, sizeof(float));
-	int i;
-	int pomocnicza_rozmiar = 100;
-	int rozmiartab = 0;
-	float tmp = 0;
-	FILE *file;
-	file = fopen(nazwa, "rt");
-	if (file != NULL) {
-		while (fscanf(file, "%f ;\n", &tmp) == 1)
-		{
-			if (rozmiartab < pomocnicza_rozmiar) {
-				if (temp != NULL)
-				{
-					tab = temp;
-					tab[rozmiartab] = tmp;
-					rozmiartab++;
-				}
-				else
-				{
-					printf("Blad\n");
-					free(temp);
-				}
-			}
-			temp = (float*)realloc(tab, (rozmiartab + 100) * sizeof(float));
-			pomocnicza_rozmiar = (rozmiartab + 100);
-		}
-		return tab;
-	}
-	else printf("Blad\n");
-	free(temp);
-	free(tab);
-}
-
-void odstep() {
-	printf("\n");
-}
-
-int lepszyScanf()
-{
-	int liczba;
-	while (1)
-	{
-		if (!scanf("%d", &liczba))
-		{
-			while (getchar() != '\n');
-			printf("Sproboj ponownie\n");
-		}
-		else return liczba;
-	}
-}
-
-float lepszyScanfFloat()
-{
-	float liczba;
-	while (1)
-	{
-		if (!scanf("%f", &liczba))
-		{
-			while (getchar() != '\n');
-			printf("Sproboj ponownie\n");
-		}
-
-		else {
-			while (getchar() != '\n');
-			return liczba;
-		}
-	}
-}
-
-float *filtr(float *szum, int rozmiar) {
-	int i = 0;
-	int b = 0;
-	int j;
-	float pomocnicza_sortowanie_5_elementow;
-	int liczba_elementow;
-	float *tab_do_sortowania_5_elementow = (float*)calloc(5, sizeof(float));
-	float *tab_przechowujaca_posortowane_dane = (float*)calloc(rozmiar, sizeof(float));
-	tab_przechowujaca_posortowane_dane[0] = szum[0];
-	tab_przechowujaca_posortowane_dane[1] = szum[1];
-	tab_przechowujaca_posortowane_dane[rozmiar - 1] = szum[rozmiar - 1];
-	tab_przechowujaca_posortowane_dane[rozmiar - 2] = szum[rozmiar - 2];
-	for (liczba_elementow = 0; liczba_elementow<rozmiar - 4; liczba_elementow++) {
-		for (b = liczba_elementow; b < liczba_elementow + 5; b++) {
-			tab_do_sortowania_5_elementow[b - liczba_elementow] = szum[b];
-		}
-		for (j = liczba_elementow; j < liczba_elementow + 5; j++)
-		{
-			for (i = 0; i < 4; i++) {
-				if (tab_do_sortowania_5_elementow[i] > tab_do_sortowania_5_elementow[i + 1]) {
-					pomocnicza_sortowanie_5_elementow = tab_do_sortowania_5_elementow[i];
-					tab_do_sortowania_5_elementow[i] = tab_do_sortowania_5_elementow[i + 1];
-					tab_do_sortowania_5_elementow[i + 1] = pomocnicza_sortowanie_5_elementow;
-				}
-			}
-		}
-		tab_przechowujaca_posortowane_dane[liczba_elementow + 2] = tab_do_sortowania_5_elementow[2];
-	}
-	return tab_przechowujaca_posortowane_dane;
-}
-
-void tekst_menu() {
-	printf("Co chcesz zrobic?\n 0: Zamknac program\n 1: Podac wartosc co jaką mają być wyliczane wartości funkcji \n 2: Podac dziedzine \n 3: Podac wspolczynniki funkcji \n 4: Wygenerowac wyniki \n 5: Zaszumic wyniki i je wygenerowac \n 6: Zapisac szumy wygenerowanych wynikow\n 7: Zapisac zaszumione wyniki odczytane z pliku\n 8: Zapisac wyniki w pliku CSV\n 9: Wczytac szumy z pliku\n 10: Wczytac wyniki z pliku\n 11: Przefiltrowac zaszumione wyniki\n 12: Zapisac przefiltrowane wyniki w pliku CSV (ostatni wykonany filtr)\n 13: Odczytac przefiltrowane wyniki z pliku CSV\n");
-}
-
-float* filtr_ruchoma_srednia(float *tablica_szumów, int rozmiar_tab) {
-	int i, j;
-	float pomocnicza_do_liczenia_sredniej = 0;
-	float *nowe_dane = (float*)calloc(rozmiar_tab, sizeof(float));
-	for (i = 0; i < 2; i++) nowe_dane[i] = tablica_szumów[i];
-	for (i = 2; i < rozmiar_tab - 2; i++) {
-		pomocnicza_do_liczenia_sredniej = 0;
-		for (j = 0; j < 5; j++) pomocnicza_do_liczenia_sredniej += tablica_szumów[i - 2 + j];
-		nowe_dane[i] = pomocnicza_do_liczenia_sredniej / 5;
-	}
-	for (i = rozmiar_tab - 2; i < rozmiar_tab; i++) nowe_dane[i] = tablica_szumów[i];
-	return nowe_dane;
-}
+void dziedzina(float*, float*);
+void wspolczynniki_funkcji(float*);
+void wyswietl(float[], int);
+void wartosci_funkcji(float, float, float, float[], float[], int);
+void ZapisCSV(float*, int, char*);
+void generator_szumu(int, float*, float*);
+int wczytywanie_wartosci(float, float, float*);
+int wczytanietablicy(char*, int*);
+float *wczytanietablicy1(char*);
+void odstep();
+int lepszyScanf();
+float lepszyScanfFloat();
+float *filtr(float*, int);
+void tekst_menu();
+float *filtr_ruchoma_srednia(float*, int);
 
 int main() {
 	float min_dziedziny = 0;
@@ -521,4 +268,272 @@ int main() {
 	free(filtr_mediana);
 	free(filtr_srednia);
 	system("pause");
+}
+
+void dziedzina(float *wmindziedziny, float *wmaxdziedziny) {
+	printf("Podaj wartosc minimalna dziedziny \t\n");
+	*wmindziedziny = lepszyScanfFloat();
+	printf("Podaj wartosc maksymalna dziedziny \t\n");
+	*wmaxdziedziny = lepszyScanfFloat();
+	if (*wmindziedziny >= *wmaxdziedziny) {
+		printf("Wartosc minimalna nie moze byc wieksza od wartosci maksymalnej\n");
+		dziedzina(wmindziedziny, wmaxdziedziny);
+	}
+	
+}
+
+void wspolczynniki_funkcji(float *tablica) {
+	int i;
+	char litera;
+	for (litera = 'A', i = 0; i < 5; i++, litera++) {
+		printf("Podaj wspolczynnik %c funkcji\n", litera);
+		scanf("%f", &tablica[i]);
+		while (getchar() != '\n');
+	}
+}
+
+void wyswietl(float wyniki[], int rozmiar) {
+	int i;
+	if (wyniki != NULL) {
+		for (i = 0; i < rozmiar; i++)
+			printf("%f\n", wyniki[i]);
+	}
+}
+
+void wartosci_funkcji(float wmindziedziny, float wmaxdziedziny, float próbkowanie, float wyniki[], float wspolczynniki[], int rozmiar) {
+	int i;
+	float x = wmindziedziny;
+	float a = wspolczynniki[0];
+	float b = wspolczynniki[1];
+	float c = wspolczynniki[2];
+	float d = wspolczynniki[3];
+	float e = wspolczynniki[4];
+	printf("Wzor funkcji jest nastepujacy: y = %f * sin(%f * x^2) + %f * cos(%f * x^2) + %f \n ", a, b, c, d, e);
+	if (wyniki != NULL) {
+		printf("Wartosci funkcji to\n");
+		for (i = 0; i < rozmiar; i++)
+		{
+			wyniki[i] = (a*sin(b*(x*x)) + c*cos(d*(x*x)) + e);
+			x = x + próbkowanie;
+		}
+	}
+}
+
+void ZapisCSV(float *dane, int rozmiar, char *nazwa) {
+	FILE *Wsk_do_pliku;
+	int i;
+	Wsk_do_pliku = fopen(nazwa, "w");
+	if (Wsk_do_pliku == NULL)
+	{
+		printf("BLAD!\n");
+	}
+	else {
+		for (i = 0; i < rozmiar; i++) {
+			fprintf(Wsk_do_pliku, "%f\n", dane[i]);
+		}
+		fclose(Wsk_do_pliku);
+		printf("Zapisano pomyslnie\n");
+	}
+}
+
+void generator_szumu(int rozmiar, float *szum, float *wyniki) {
+	int i;
+	int z;
+	int liczba_probek = rand() % rozmiar;
+	int losowe_probki = 0;
+	float *tablica = (float*)calloc(rozmiar, sizeof(float));
+	srand(time(NULL));
+	if (szum != NULL) {
+		printf("Zaszumione wyniki:\n");
+		for (i = 0; i < rozmiar; i++) {
+			tablica[i] = wyniki[i];
+		}
+		for (z = 0; z < liczba_probek; z++) {
+			losowe_probki = rand() % rozmiar;
+			szum[losowe_probki] = (((rand() % 700) *1.1) / 500 - 0.1) + 0.03;
+			tablica[losowe_probki] = wyniki[losowe_probki] + szum[losowe_probki];
+		}
+		for (i = 0; i < rozmiar; i++) {
+			szum[i] = tablica[i];
+			printf("%f\n", szum[i]);
+		}
+	}
+	else printf("Blad\n");
+	free(tablica);
+}
+
+int wczytywanie_wartosci(float wmindziedziny, float wmaxdziedziny, float *probki) {
+	int wartosc;
+	printf("Podaj co jaką wartość mają być wyliczane wartości funkcji\n");
+	scanf("%f", probki);
+	while (getchar() != '\n');
+	if (*probki < 0) {
+		printf("Wpisales liczbe ujemną, ale nic się nie stało\n");
+		*probki = -(*probki);
+	}
+	if (*probki == 0) return wczytywanie_wartosci(wmindziedziny, wmaxdziedziny, probki);
+	wartosc = abs((wmaxdziedziny - wmindziedziny) / *probki);
+	return wartosc;
+}
+
+int wczytanietablicy(char *nazwa, int *rozmiar)
+{
+	float *tab = (float*)calloc(100, sizeof(float));
+	float *temp = (float*)calloc(100, sizeof(float));
+	int i;
+	int pomocnicza_rozmiar = 100;
+	int rozmiartab = 0;
+	float tmp = 0;
+	FILE *file;
+	file = fopen(nazwa, "rt");
+	if (file != NULL) {
+		while (fscanf(file, "%f ;\n", &tmp) == 1)
+		{
+			if (rozmiartab < pomocnicza_rozmiar) {
+				if (temp != NULL)
+				{
+					tab = temp;
+					tab[rozmiartab] = tmp;
+					rozmiartab++;
+				}
+				else
+				{
+					printf("Blad\n");
+					free(temp);
+				}
+			}
+			temp = (float*)realloc(tab, (rozmiartab + 100) * sizeof(float));
+			pomocnicza_rozmiar = (rozmiartab + 100);
+		}
+		for (i = 0; i < rozmiartab; i++) {
+			printf("%f\n", tab[i]);
+		}
+		*rozmiar = rozmiartab;
+	}
+	if (*rozmiar > 0) {
+		return 1;
+	}
+	else return 0;
+	free(temp);
+}
+
+float *wczytanietablicy1(char *nazwa)
+{
+	float *tab = (float*)calloc(100, sizeof(float));
+	float *temp = (float*)calloc(100, sizeof(float));
+	int i;
+	int pomocnicza_rozmiar = 100;
+	int rozmiartab = 0;
+	float tmp = 0;
+	FILE *file;
+	file = fopen(nazwa, "rt");
+	if (file != NULL) {
+		while (fscanf(file, "%f ;\n", &tmp) == 1)
+		{
+			if (rozmiartab < pomocnicza_rozmiar) {
+				if (temp != NULL)
+				{
+					tab = temp;
+					tab[rozmiartab] = tmp;
+					rozmiartab++;
+				}
+				else
+				{
+					printf("Blad\n");
+					free(temp);
+				}
+			}
+			temp = (float*)realloc(tab, (rozmiartab + 100) * sizeof(float));
+			pomocnicza_rozmiar = (rozmiartab + 100);
+		}
+		return tab;
+	}
+	else printf("Blad\n");
+	free(temp);
+	free(tab);
+}
+
+void odstep() {
+	printf("\n");
+}
+
+int lepszyScanf()
+{
+	int liczba;
+	while (1)
+	{
+		if (!scanf("%d", &liczba))
+		{
+			while (getchar() != '\n');
+			printf("Sproboj ponownie\n");
+		}
+		else return liczba;
+	}
+}
+
+float lepszyScanfFloat()
+{
+	float liczba;
+	while (1)
+	{
+		if (!scanf("%f", &liczba))
+		{
+			while (getchar() != '\n');
+			printf("Sproboj ponownie\n");
+		}
+
+		else {
+			while (getchar() != '\n');
+			return liczba;
+		}
+	}
+}
+
+float *filtr(float *szum, int rozmiar) {
+	int i = 0;
+	int b = 0;
+	int j;
+	float pomocnicza_sortowanie_5_elementow;
+	int liczba_elementow;
+	float *tab_do_sortowania_5_elementow = (float*)calloc(5, sizeof(float));
+	float *tab_przechowujaca_posortowane_dane = (float*)calloc(rozmiar, sizeof(float));
+	tab_przechowujaca_posortowane_dane[0] = szum[0];
+	tab_przechowujaca_posortowane_dane[1] = szum[1];
+	tab_przechowujaca_posortowane_dane[rozmiar - 1] = szum[rozmiar - 1];
+	tab_przechowujaca_posortowane_dane[rozmiar - 2] = szum[rozmiar - 2];
+	for (liczba_elementow = 0; liczba_elementow<rozmiar - 4; liczba_elementow++) {
+		for (b = liczba_elementow; b < liczba_elementow + 5; b++) {
+			tab_do_sortowania_5_elementow[b - liczba_elementow] = szum[b];
+		}
+		for (j = liczba_elementow; j < liczba_elementow + 5; j++)
+		{
+			for (i = 0; i < 4; i++) {
+				if (tab_do_sortowania_5_elementow[i] > tab_do_sortowania_5_elementow[i + 1]) {
+					pomocnicza_sortowanie_5_elementow = tab_do_sortowania_5_elementow[i];
+					tab_do_sortowania_5_elementow[i] = tab_do_sortowania_5_elementow[i + 1];
+					tab_do_sortowania_5_elementow[i + 1] = pomocnicza_sortowanie_5_elementow;
+				}
+			}
+		}
+		tab_przechowujaca_posortowane_dane[liczba_elementow + 2] = tab_do_sortowania_5_elementow[2];
+	}
+	return tab_przechowujaca_posortowane_dane;
+}
+
+void tekst_menu() {
+	printf("Co chcesz zrobic?\n 0: Zamknac program\n 1: Podac wartosc co jaką mają być wyliczane wartości funkcji \n 2: Podac dziedzine \n 3: Podac wspolczynniki funkcji \n 4: Wygenerowac wyniki \n 5: Zaszumic wyniki i je wygenerowac \n 6: Zapisac szumy wygenerowanych wynikow\n 7: Zapisac zaszumione wyniki odczytane z pliku\n 8: Zapisac wyniki w pliku CSV\n 9: Wczytac szumy z pliku\n 10: Wczytac wyniki z pliku\n 11: Przefiltrowac zaszumione wyniki\n 12: Zapisac przefiltrowane wyniki w pliku CSV (ostatni wykonany filtr)\n 13: Odczytac przefiltrowane wyniki z pliku CSV\n");
+}
+
+float *filtr_ruchoma_srednia(float *tablica_szumów, int rozmiar_tab) {
+	int i, j;
+	float pomocnicza_do_liczenia_sredniej = 0;
+	float *nowe_dane = (float*)calloc(rozmiar_tab, sizeof(float));
+	for (i = 0; i < 2; i++) nowe_dane[i] = tablica_szumów[i];
+	for (i = 2; i < rozmiar_tab - 2; i++) {
+		pomocnicza_do_liczenia_sredniej = 0;
+		for (j = 0; j < 5; j++) pomocnicza_do_liczenia_sredniej += tablica_szumów[i - 2 + j];
+		nowe_dane[i] = pomocnicza_do_liczenia_sredniej / 5;
+	}
+	for (i = rozmiar_tab - 2; i < rozmiar_tab; i++) nowe_dane[i] = tablica_szumów[i];
+	return nowe_dane;
 }
