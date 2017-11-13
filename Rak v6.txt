@@ -467,7 +467,10 @@ int lepszyScanf()
 			while (getchar() != '\n');
 			printf("Sproboj ponownie\n");
 		}
-		else return liczba;
+		else {
+			while (getchar() != '\n');
+			return liczba;
+		}
 	}
 }
 
